@@ -1,0 +1,114 @@
+<div class="product-card" [class.disabled]="!product.inStock">
+  <!-- Product Image Container -->
+  <div class="product-image-container">
+    <img
+      [src]="product.image"
+      [alt]="product.name"
+      class="product-image"
+      loading="lazy"
+    />
+
+    <!-- Quick View Overlay -->
+    <div class="quick-view-overlay">
+      <button class="quick-view-btn" (click)="quickView()">
+        Quick View
+      </button>
+    </div>
+  </div>
+
+  <!-- Product Content -->
+  <div class="product-content">
+    <!-- Product Name -->
+    <h3 class="product-name">{{ product.name }}</h3>
+
+    <!-- Product Description -->
+    <p class="product-description">{{ product.description }}</p>
+
+    <!-- Price and Stock Status -->
+    <div class="price-section">
+      <span class="product-price">{{ product.price }}</span>
+      <span class="stock-status" [class.in-stock]="product.inStock" [class.out-of-stock]="!product.inStock">
+        {{ product.inStock ? 'In Stock' : 'Out of Stock' }}
+      </span>
+    </div>
+
+    <!-- Variant Selection -->
+    <div class="variant-section">
+      <label class="variant-label" [for]="'variant-' + product.id">
+        Select Variant
+      </label>
+      <select
+         [id]="'variant-' + product.id"
+         class="variant-select"
+         [attr.aria-label]="'Select ' + product.name + ' variant'"
+         (change)="onVariantChange($event)"
+         [disabled]="!product.inStock"
+       >
+         <option value="">Choose an option</option>
+         <option *ngFor="let variant of product.variants" [value]="variant">
+           {{ variant }}
+         </option>
+       </select>
+    </div>
+
+    <!-- Add to Cart Button -->
+    <button
+      class="add-to-cart-btn"
+      [class.enabled]="product.inStock"
+      [class.disabled]="!product.inStock"
+      [class.out-of-stock]="!product.inStock"
+      (click)="addToCart()"
+      [disabled]="!product.inStock"
+      [attr.aria-label]="product.inStock ? 'Add ' + product.name + ' to cart' : product.name + ' is out of stock'"
+    >
+      <svg
+        *ngIf="product.inStock"
+        class="cart-icon"
+        fill="currentColor"
+        viewBox="0 0 20 20"
+      >
+        <path d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 3H6.28l-.31-1.243A1 1 0 005 1H3zM16 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM6.5 18a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"/>
+      </svg>
+
+      <svg
+        *ngIf="!product.inStock"
+        class="cart-icon"
+        fill="currentColor"
+        viewBox="0 0 20 20"
+      >
+        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+      </svg>
+
+      {{ product.inStock ? 'Add to Cart' : 'Out of Stock' }}
+    </button>
+  </div>
+</div>
+
+<!-- Quick View Modal -->
+<div
+  *ngIf="showQuickView"
+  class="quick-view-modal"
+  (click)="onModalClick($event)"
+>
+  <div class="modal-content">
+    <button class="close-btn" (click)="closeQuickView()">
+      <svg fill="currentColor" viewBox="0 0 20 20">
+        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+      </svg>
+    </button>
+
+    <div class="modal-image-container">
+      <img
+        [src]="product.image"
+        [alt]="product.name"
+        class="modal-image"
+      />
+    </div>
+
+    <div class="modal-info">
+      <h2 class="modal-title">{{ product.name }}</h2>
+      <p class="modal-description">{{ product.description }}</p>
+      <div class="modal-price">${{ product.price }}</div>
+    </div>
+  </div>
+</div>
